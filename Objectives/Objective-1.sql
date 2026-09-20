@@ -1,8 +1,9 @@
+-- ============================================================
+-- OBJECTIVE 1: ENCOUNTERS OVERVIEW
+-- ============================================================
 USE hospital;
 
--- OBJECTIVE 1: ENCOUNTERS OVERVIEW
-
--- a. How many total encounters occurred each year?
+-- 1. How many total encounters occurred each year?
 
 Select 
 	year(start) as Year,
@@ -10,8 +11,11 @@ Select
 from encounters
 group by 1
 order by Year;
+-- Finding: volume grew from ~1,336 (2011) to a peak of ~3,885 (2014), then held around 2,200-2,500/year.
+-- 2022 is a partial year (only 220 records), exclude from trend comparisons.
 
--- b. For each year, what percentage of all encounters belonged to each encounter class
+
+-- 2. For each year, what percentage of all encounters belonged to each encounter class
 -- (ambulatory, outpatient, wellness, urgent care, emergency, and inpatient)?
 
 with class as (Select 
@@ -44,9 +48,11 @@ Concat(sum(Urgent_Care) , ' ( ' , round((sum(Urgent_Care) /sum(total_encounters)
 Concat(sum(Emergency),    ' ( ' , round((sum(Emergency)   /sum(total_encounters))*100,2),'%)')   as Emergency,
 Concat(sum(Inpatient),    ' ( ' , round((sum(Inpatient)   /sum(total_encounters))*100,2),'%)')  as Inpatient
 from class;
+-- Finding: ambulatory share climbed from ~50% (2011) to over 60% by 2014 and has stayed dominant since,
+-- mostly displacing outpatient, which fell from ~24% to under 15%.
 
 
--- c. What percentage of encounters were over 24 hours versus under 24 hours?
+-- 3. What percentage of encounters were over 24 hours versus under 24 hours?
 
 (Select 
 	'count' AS metric,
@@ -59,4 +65,6 @@ union all
 	concat(round((sum(Case when timestampdiff(minute,start,stop) >= 1440 then 1 else 0 end)/count(*))*100,2),' %')  as over_24_hours,
 	concat(round((sum(Case when timestampdiff(minute,start,stop) < 1440 then 1 else 0 end)/count(*))*100,2),' %') as under_24_hours
 from encounters
-) 
+) ;
+-- Finding: 95.87% of encounters are same-day (<24h); genuinely extended stays are rare (4.13%),
+-- consistent with an ambulatory/wellness-heavy population.
