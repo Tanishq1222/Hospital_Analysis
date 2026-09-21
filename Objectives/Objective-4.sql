@@ -37,9 +37,9 @@ from encounters e join patients p on e.patient = p.id
 group by p.race
 Order by avg_claim_cost DESC;
 
-Select p.ethincity, ROUND(AVG(e.total_claim_cost), 2) as avg_claim_cost, COUNT(*) as encounters
+Select p.ethnicity, ROUND(AVG(e.total_claim_cost), 2) as avg_claim_cost, COUNT(*) as encounters
 from encounters e join patients p on e.patient = p.id
-group by p.ethincity
+group by p.ethnicity
 Order by avg_claim_cost DESC;
 -- Finding: average claim cost is notably higher for male patients ($4,085 vs $3,252 female),
 -- for patients recorded as Native American ($7,828, though a small sample at 859 encounters)
